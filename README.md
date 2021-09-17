@@ -6,5 +6,5 @@ Features, says hello
 * !hojicha [,hi,hello]
 * !hojicha speak
 	* Tells you a "fortune"
-* !hojicha q <some text>
+* !hojicha q <yes/no question>
 	*Answers a yes/no question
