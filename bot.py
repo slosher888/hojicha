@@ -4,14 +4,17 @@ import os
 import discord
 import subprocess
 import random
+import humanize
+import datetime as dt
 
 from dotenv import load_dotenv
 
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+fortune_file=os.getenv('FORTUNE_DB_PATH')
 encoding='utf-8'
-fortune_file="/Users/csul/github/fortunes/fortunes"
+wakeup_time=dt.datetime.now()
 
 
 def yes_no():
@@ -29,14 +32,18 @@ def yes_no():
 		if answer:
 			action='nods'
 		else:
-			action='shakes it\'s head'
+			action='shakes its head'
 		response='Hojicha {act}{mod}.'
 		return response.format(act=action,mod=modifier)
+def hojicha_uptime():
+	return humanize.naturaltime(dt.datetime.now()-wakeup_time)[:-4]+'.'
+
 client = discord.Client()
 
 @client.event
 async def on_ready():
 	print('We have logged in as {0.user}'.format(client))
+
 
 @client.event
 async def on_message(message):
@@ -52,6 +59,8 @@ async def on_message(message):
 			await message.channel.send(res.decode(encoding))
 		elif msg_args[1].upper().startswith(' Q'):
 			await message.channel.send(yes_no())
+		elif msg_args[1].upper().startswith(' UPTIME'):
+			await message.channel.send("I have been awake for "+ hojicha_uptime())
 		else:
 			await message.channel.send('Hojicha slowly looks in your direction')
 
