@@ -10,6 +10,8 @@ Features, says hello
 	*Answers a yes/no question
 * !hojica pick <comma separated list>
 	* picks element from list
+* !hojica draw card
+	* Single card tarot reading
 * !hojicha help
 	* Displays every command it knows
 
