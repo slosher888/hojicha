@@ -1,2 +1,4 @@
 .env*
 .DS_STORE
+playground.py
+bot_playground.py
