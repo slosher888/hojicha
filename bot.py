@@ -25,7 +25,7 @@ def draw_a_tarot_card(msg_args):
 	result='You have drawn '+ card['name']+orientation+'\n'
 	result +='\nMeaning up:\n'
 	result += card['meaning_up']
-	result +='\n\nMeaning down:\n'
+	result +='\n\nMeaning upside down:\n'
 	result += card['meaning_rev']
 	return result
 
@@ -99,10 +99,6 @@ async def on_message(message):
 			await message.channel.send("I have been awake for "+ hojicha_uptime())
 		elif msg_args[1].upper().startswith(' DRAW CARD'):
 			await message.channel.send(draw_a_tarot_card(msg_args[1]))
-		elif msg_args[1].upper().startswith(' PICK'):
-			await message.channel.send(pick_one(msg_args[1][6:]))
-		elif msg_args[1].upper().startswith(' HELP'):
-			await message.channel.send(help_text())
 		else:
 			await message.channel.send('Hojicha slowly looks in your direction')
 
