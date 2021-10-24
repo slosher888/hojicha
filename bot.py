@@ -30,6 +30,26 @@ def draw_a_tarot_card(msg_args):
 	return result
 
 
+def help_text():
+	string=          'Hiii, I know the following commands:\n'
+	string += 'SPEAK  Give words of wisdom (a la fortune)\n'
+	string += 'PICK   Select from comma seperated list\n'
+	string += 'Q      Answer yes/no question\n'
+	string += 'DRAW CARD Gives single tarot card reading\n'
+	string += 'UPTIME Tells you how long I have been awake B^]\n'
+	string += 'HELP   Display this message, obvs\n'
+	return string
+
+def pick_one(string):
+	list=string.split(',')
+	if list[0]=='':
+		result = 'Umm..'
+	elif len(list)==1:
+		result = 'You gave me no choice, I pick ' + list[0] + '\nT_T'
+	else:
+		selection=random.choice(list)
+		result = "I pick... " + selection
+	return result
 
 def yes_no():
 		conviction=random.randint(0,10)
@@ -55,19 +75,6 @@ def hojicha_uptime():
 	return humanize.naturaltime(dt.datetime.now()-wakeup_time)[:-4]+'.'
 
 client = discord.Client()
-#event_df= {
-	#'Server':[client.server_name],
-	#'Event Name':['wake_up_hojicha'],
-	#'Event Time':[dt.datetime.now()],
-#}
-
-#def time_since_event(df):
-#		last_time=df[
-#		(df['Server'=='Silent Running']) &
-#		(df['Event Name'=='uv catastrophe']) &
-#		].iloc[0]['Event time']
-#		humanize.naturaltime(dt.datetime.now()-last_time)
-
 
 @client.event
 async def on_ready():
@@ -92,6 +99,10 @@ async def on_message(message):
 			await message.channel.send("I have been awake for "+ hojicha_uptime())
 		elif msg_args[1].upper().startswith(' DRAW CARD'):
 			await message.channel.send(draw_a_tarot_card(msg_args[1]))
+		elif msg_args[1].upper().startswith(' PICK'):
+			await message.channel.send(pick_one(msg_args[1][6:]))
+		elif msg_args[1].upper().startswith(' HELP'):
+			await message.channel.send(help_text())
 		else:
 			await message.channel.send('Hojicha slowly looks in your direction')
 

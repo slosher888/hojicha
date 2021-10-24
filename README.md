@@ -1,5 +1,5 @@
 # hojicha
-Sloshers test bot for funsies
+Sloshers bot for funsies
 
 Features, says hello
 
@@ -8,6 +8,10 @@ Features, says hello
 	* Tells you a "fortune"
 * !hojicha q <yes/no question>
 	*Answers a yes/no question
+* !hojica pick <comma separated list>
+	* picks element from list
+* !hojicha help
+	* Displays every command it knows
 
 
 	Dependencies
@@ -16,3 +20,4 @@ Features, says hello
 		https://github.com/bmc/fortunes.git
 
 Make sure to set `FORTUNE_DB_PATH` in `.env` or you'll make Hojicha sad. T_T
+And we can't have that...
