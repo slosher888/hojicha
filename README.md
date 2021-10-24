@@ -1,5 +1,5 @@
 # hojicha
-Sloshers test bot for funsies
+Sloshers bot for funsies
 
 Features, says hello
 
