@@ -8,6 +8,10 @@ Features, says hello
 	* Tells you a "fortune"
 * !hojicha q <yes/no question>
 	*Answers a yes/no question
+* !hojica pick <comma separated list>
+	* picks element from list
+* !hojicha help
+	* Displays every command it knows
 
 
 	Dependencies

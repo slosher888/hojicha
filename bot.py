@@ -16,6 +16,25 @@ fortune_file=os.getenv('FORTUNE_DB_PATH')
 encoding='utf-8'
 wakeup_time=dt.datetime.now()
 
+def help_text():
+	string=          'Hiii, I know the following commands:\n'
+	string = string+ 'SPEAK  Give words of wisdom (a la fortune)\n'
+	string = string+ 'PICK   Select from comma seperated list\n'
+	string = string+ 'Q      Answer yes/no question\n'
+	string = string+ 'HELP   Display this message, obvs\n'
+	return string
+	#string = string+ '\n'
+
+def pick_one(string):
+	list=string.split(',')
+	if list[0]=='':
+		result = 'Umm..'
+	elif len(list)==1:
+		result = 'You gave me no choice, I pick ' + list[0] + '\nT_T'
+	else:
+		selection=random.choice(list)
+		result = "I pick... " + selection
+	return result
 
 def yes_no():
 		conviction=random.randint(0,9)
@@ -61,6 +80,10 @@ async def on_message(message):
 			await message.channel.send(yes_no())
 		elif msg_args[1].upper().startswith(' UPTIME'):
 			await message.channel.send("I have been awake for "+ hojicha_uptime())
+		elif msg_args[1].upper().startswith(' PICK'):
+			await message.channel.send(pick_one(msg_args[1][6:]))
+		elif msg_args[1].upper().startswith(' HELP'):
+			await message.channel.send(help_text())
 		else:
 			await message.channel.send('Hojicha slowly looks in your direction')
 
