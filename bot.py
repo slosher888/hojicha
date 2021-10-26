@@ -34,8 +34,8 @@ def help_text():
 	string=          'Hiii, I know the following commands:\n'
 	string += 'SPEAK  Give words of wisdom (a la fortune)\n'
 	string += 'PICK   Select from comma seperated list\n'
-	string += 'Q      Answer yes/no question\n'
-	string += 'DRAW CARD Gives single tarot card reading\n'
+	string += 'Q <yes/no question> Answer yes/no question\n'
+	string += 'DRAW CARD <open ended question> Gives single tarot card reading\n'
 	string += 'UPTIME Tells you how long I have been awake B^]\n'
 	string += 'HELP   Display this message, obvs\n'
 	return string
@@ -51,7 +51,8 @@ def pick_one(string):
 		result = "I pick... " + selection
 	return result
 
-def yes_no():
+def yes_no(mesg):
+
 		conviction=random.randint(0,10)
 		modifier=''
 		action=''
@@ -69,8 +70,10 @@ def yes_no():
 			action='nods'
 		else:
 			action='shakes its head'
-		response='Hojicha {act}{mod}.'
-		return response.format(act=action,mod=modifier)
+		reaction='Hojicha {act}{mod}.'.format(act=action,mod=modifier)
+		original_question=' '.join(mesg.split(' ')[1:])
+		response=reaction+'\n> Original question: '+original_question
+		return response
 def hojicha_uptime():
 	return humanize.naturaltime(dt.datetime.now()-wakeup_time)[:-4]+'.'
 
@@ -94,7 +97,7 @@ async def on_message(message):
 			res = subprocess.check_output(['fortune', fortune_file])
 			await message.channel.send(res.decode(encoding))
 		elif msg_args[1].upper().startswith(' Q'):
-			await message.channel.send(yes_no())
+			await message.channel.send(yes_no(msg_args[1]))
 		elif msg_args[1].upper().startswith(' UPTIME'):
 			await message.channel.send("I have been awake for "+ hojicha_uptime())
 		elif msg_args[1].upper().startswith(' DRAW CARD'):
