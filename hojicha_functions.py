@@ -88,6 +88,8 @@ def roll_dice(msg_args):
 		mod=int(mod_text[1:])
 	except IndexError:
 		result_string=' '.join([str(roll) for roll in dice_results])
+		if len(result_string) > 1300:
+			return 'Hojicha spilled its die on the floor and walked off'
 		return 'You have rolled:\n' + ' '.join(result_string)
 	except ValueError:
 		return 'Hojicha is remembering something...'
@@ -97,10 +99,13 @@ def roll_dice(msg_args):
 	
 	dice_results_mod = ['{dice_roll} ({orig})'.format(
 	dice_roll=roll+mod,orig=roll) for roll in dice_results]
+	result_string='You have rolled:\n' + ' '.join(dice_results_mod)
 
 	#return "you asked for "+msg_args
-	return 'You have rolled:\n' + ' '.join(dice_results_mod)
+	if len(result_string) > 1300:
+		return 'Hojicha got bored halfway and is drinking a beverage'
 
+	return result_string
 
 
 
