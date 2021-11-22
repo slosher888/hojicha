@@ -71,8 +71,13 @@ def roll_dice(msg_args):
 # format !hojicha roll NdM +/-K
 	roll_args=msg_args.split(' ')
 	dice_text=roll_args[2]
-	[n,m] = dice_text.split('D')
+	try:
+		[n,m] = dice_text.split('D')
+	except ValueError:
+		return 'Hojicha sniffs the air'
 	n=int(n)
+	if n > 800:
+		return 'Hojicha doesn't really feel like doing that'
 	m=int(m)
 	dice_results=[ random.randint(1,m) for i in range(n)]	
 
