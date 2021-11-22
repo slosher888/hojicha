@@ -12,6 +12,8 @@ Features, says hello
 	* picks element from list
 * !hojica draw card
 	* Single card tarot reading
+* !hojica roll ndm (+/-x)
+	* Roll m-sided die, n times (with optional modifier)
 * !hojicha help
 	* Displays every command it knows
 
