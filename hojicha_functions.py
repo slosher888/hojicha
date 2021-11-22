@@ -79,7 +79,7 @@ def roll_dice(msg_args):
 		m=int(m)
 	except ValueError:
 		return 'Hojicha sniffs the wind...'
-	if n > 800:
+	if n > 300:
 		return 'Hojicha doesn\'t really feel like doing that'
 	dice_results=[ random.randint(1,m) for i in range(n)]	
 
