@@ -64,7 +64,7 @@ async def on_message(message):
 			if len(message.attachments)==1:
 				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
 			else:
-				text_to_parse=msg_args[1][16:]
+				text_to_parse=msg_args[1][5:]
 
 			response_string=hf.text_to_binary(text_to_parse)
 			if len(response_string) > 2000:
@@ -75,7 +75,7 @@ async def on_message(message):
 			if len(message.attachments)==1:
 				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
 			else:
-				text_to_parse=msg_args[1][16:]
+				text_to_parse=msg_args[1][5:]
 
 			response_string=hf.binary_to_text(text_to_parse)
 			if len(response_string) > 2000:
