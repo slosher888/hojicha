@@ -28,7 +28,7 @@ def help_text():
 	string += 'ROLL NdM <+/-X>: M-sided die N times (optional +/- modifier)\n'
 	string += 'HELP:     Display this message, obvs\n'
 	string += 'T2B <message>:      Convert text (string or file) to binary (may return file)\n'
-	string += 'B2T <message>:      Convert binary (string or file of 0's or 1's) to text (may return file)\n'
+	string += 'B2T <message>:      Convert binary (string or file of 0\'s or 1\'s) to text (may return file)\n'
 	return string
 
 def pick_one(string):
