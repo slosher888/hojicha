@@ -5,7 +5,7 @@ import discord
 import datetime as dt
 import subprocess
 import hojicha_functions as hf
-
+import requests
 from dotenv import load_dotenv
 
 
@@ -21,6 +21,22 @@ client = discord.Client()
 async def on_ready():
 	print('We have logged in as {0.user}'.format(client))
 
+async def send_big_message(message,string):
+	filename=str(dt.datetime.now())+'.txt'
+	save_prefix='/tmp'
+	filepath=save_prefix+'/'+filename
+	response_file = open(filepath,'w')
+	max_len=80
+	chunks = [string[i:i+max_len] for i in range(0,len(string),max_len)]
+	for chunk in chunks:
+		response_file.write(chunk)
+		response_file.write('\n')
+	response_file.close()
+	response_file = open(filepath,'r')
+
+	discord_file=discord.File(response_file,filename)
+	await message.channel.send(file=discord_file)
+	response_file.close()
 
 @client.event
 async def on_message(message):
@@ -44,6 +60,28 @@ async def on_message(message):
 			await message.channel.send(hf.pick_one(msg_args[1][6:]))
 		elif msg_args[1].upper().startswith(' ROLL'):
 			await message.channel.send(hf.roll_dice(msg_args[1].upper() ))
+		elif msg_args[1].upper().startswith(' T2B'):
+			if len(message.attachments)==1:
+				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
+			else:
+				text_to_parse=msg_args[1][16:]
+
+			response_string=hf.text_to_binary(text_to_parse)
+			if len(response_string) > 2000:
+				await send_big_message(message,response_string)
+			else:
+				await message.channel.send(response_string)
+		elif msg_args[1].upper().startswith(' B2T'):
+			if len(message.attachments)==1:
+				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
+			else:
+				text_to_parse=msg_args[1][16:]
+
+			response_string=hf.binary_to_text(text_to_parse)
+			if len(response_string) > 2000:
+				await send_big_message(message,response_string)
+			else:
+				await message.channel.send(response_string)
 		elif msg_args[1].upper().startswith(' HELP'):
 			await message.channel.send(hf.help_text())
 		else:

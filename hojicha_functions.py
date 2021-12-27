@@ -27,6 +27,8 @@ def help_text():
 	string += 'UPTIME:   Tells you how long I have been awake B^]\n'
 	string += 'ROLL NdM <+/-X>: M-sided die N times (optional +/- modifier)\n'
 	string += 'HELP:     Display this message, obvs\n'
+	string += 'T2B <message>:      Convert text (string or file) to binary (may return file)\n'
+	string += 'B2T <message>:      Convert binary (string or file of 0's or 1's) to text (may return file)\n'
 	return string
 
 def pick_one(string):
@@ -107,5 +109,27 @@ def roll_dice(msg_args):
 
 	return result_string
 
+def text_to_binary(string):
+	binary_string=' '.join(format(ord(i),'b').zfill(8) for i in string)
+	return binary_string
 
+def text_from_bits(bits,encoding='utf-8', errors='surrogatepass'):
+# Convert string of 0's and 1's into a character
+	n = int(bits,2)
+	try:
+		return n.to_bytes((n.bit_length() + 7) // 8, 'big').decode(encoding,errors)
+	except UnicodeDecodeError:
+		return ''
+def binary_to_text(string):
+	# remove whitespace from string (if any)
+	no_space = string.replace(" ","").replace('\n','')
+	
+	# break up string into chunks of 8
+	chunks,chunk_size= len(no_space), 8
+	char_list=[ no_space[i:i+chunk_size] for i in range(0,chunks,chunk_size)]
 
+	message=""
+	for char in char_list:
+		#convert each 8 length string into a character
+		message=message+text_from_bits(char)
+	return message
