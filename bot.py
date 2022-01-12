@@ -2,11 +2,13 @@
 
 import os
 import discord
+from discord.utils import get
 import datetime as dt
 import subprocess
 import hojicha_functions as hf
 import requests
 from dotenv import load_dotenv
+import asyncio
 
 
 load_dotenv()
@@ -45,6 +47,7 @@ async def on_message(message):
 		return
 	if msg.startswith('!hojicha'):
 		msg_args=msg.split('!hojicha')
+		msg_arg_list=msg_args[1].split(' ')
 		if msg_args[1]=='' or msg_args[1].upper()==' HI' or msg_args[1].upper()==' HELLO':
 			await message.channel.send('Hello!')
 		elif msg_args[1].upper()==' SPEAK':
@@ -82,6 +85,34 @@ async def on_message(message):
 				await send_big_message(message,response_string)
 			else:
 				await message.channel.send(response_string)
+		# bonk
+		elif msg_args[1].upper().startswith(' BONK'):
+			try:
+				bonk_id,bonk_duration=hf.bonk(msg_arg_list[2:])
+				user2bonk= message.mentions[0]
+				uname=user2bonk.display_name
+				role=get(message.guild.roles,name='bonked')
+				await user2bonk.add_roles(role)
+				await message.channel.send('Hojicha bonks {user} for {duration}s'.format(user=uname,duration=bonk_duration))
+				await asyncio.sleep(bonk_duration)
+				await user2bonk.remove_roles(role)
+				await message.channel.send('Hojicha unbonks {user}'.format(user=uname))
+
+
+			except ValueError:
+				await message.channel.send('Hojicha doesn\'t understand, try \'!hojicha help\' ?')
+
+		# un bonk
+		elif msg_args[1].upper().startswith(' UNBONK ME'):
+			role=get(message.guild.roles, name='bonked')
+			await message.author.remove_roles(role)
+			if(message.author.nick=='None'):
+				uname=message.author.nick
+			else:
+				uname=message.author.name
+			await message.channel.send('Hojicha unbonks {user}'.format(user=uname))
+
+
 		elif msg_args[1].upper().startswith(' HELP'):
 			await message.channel.send(hf.help_text())
 		else:

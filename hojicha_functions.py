@@ -29,6 +29,7 @@ def help_text():
 	string += 'HELP:     Display this message, obvs\n'
 	string += 'T2B <message>:      Convert text (string or file) to binary (may return file)\n'
 	string += 'B2T <message>:      Convert binary (string or file of 0\'s or 1\'s) to text (may return file)\n'
+	string += 'BONK <user_name> [duration] [units]: Give <user> a \'bonk\' role for *duration* *units* (default 10 minutes)\n'
 	return string
 
 def pick_one(string):
@@ -74,8 +75,8 @@ def roll_dice(msg_args):
 	roll_args=msg_args.split(' ')
 	dice_text=roll_args[2]
 	[n,m] = dice_text.split('D')
-	
-		
+
+
 	try:
 		n=int(n)
 		m=int(m)
@@ -83,7 +84,7 @@ def roll_dice(msg_args):
 		return 'Hojicha sniffs the wind...'
 	if n > 300:
 		return 'Hojicha doesn\'t really feel like doing that'
-	dice_results=[ random.randint(1,m) for i in range(n)]	
+	dice_results=[ random.randint(1,m) for i in range(n)]
 
 	try:
 		mod_text=roll_args[3]
@@ -95,10 +96,10 @@ def roll_dice(msg_args):
 		return 'You have rolled:\n' + ' '.join(result_string)
 	except ValueError:
 		return 'Hojicha is remembering something...'
-	
+
 	if mod_text[0]=='-':
 		mod=mod*-1
-	
+
 	dice_results_mod = ['{dice_roll} ({orig})'.format(
 	dice_roll=roll+mod,orig=roll) for roll in dice_results]
 	result_string='You have rolled:\n' + ' '.join(dice_results_mod)
@@ -123,7 +124,7 @@ def text_from_bits(bits,encoding='utf-8', errors='surrogatepass'):
 def binary_to_text(string):
 	# remove whitespace from string (if any)
 	no_space = string.replace(" ","").replace('\n','')
-	
+
 	# break up string into chunks of 8
 	chunks,chunk_size= len(no_space), 8
 	char_list=[ no_space[i:i+chunk_size] for i in range(0,chunks,chunk_size)]
@@ -133,3 +134,23 @@ def binary_to_text(string):
 		#convert each 8 length string into a character
 		message=message+text_from_bits(char)
 	return message
+
+def bonk(arg_list):
+		uid=arg_list[0]
+		if len(arg_list) == 1:
+			magnitude=10
+			units_string='min'
+		else:
+				magnitude=float(arg_list[1])
+				units_string=arg_list[2]
+
+		if units_string.lower()=='min' or units_string.lower()=='minutes' or units_string.lower()=='minute' or units_string.lower()=='m':
+			multiplier=60
+		elif units_string.lower()=='sec' or units_string.lower()=='seconds' or units_string.lower()=='second' or units_string.lower()=='s':
+
+			multiplier = 1
+		elif units_string.lower()=='hour' or units_string.lower()=='hours' or units_string.lower()=='h':
+			multiplier = 3600
+		else:
+			raise ValueError('expected units or something')
+		return uid, magnitude*multiplier
