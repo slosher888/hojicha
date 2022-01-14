@@ -89,14 +89,17 @@ async def on_message(message):
 		elif msg_args[1].upper().startswith(' BONK'):
 			try:
 				bonk_id,bonk_duration=hf.bonk(msg_arg_list[2:])
-				user2bonk= message.mentions[0]
-				uname=user2bonk.display_name
-				role=get(message.guild.roles,name='bonked')
-				await user2bonk.add_roles(role)
-				await message.channel.send('Hojicha bonks {user} for {duration}s'.format(user=uname,duration=bonk_duration))
-				await asyncio.sleep(bonk_duration)
-				await user2bonk.remove_roles(role)
-				await message.channel.send('Hojicha unbonks {user}'.format(user=uname))
+				if duration >= 60*60: # one hour
+					await message.channel.send('Hojichas is admiring the bonk hammer and didn\'t hear you.')
+				else:
+					user2bonk= message.mentions[0]
+					uname=user2bonk.display_name
+					role=get(message.guild.roles,name='BONKED')
+					await user2bonk.add_roles(role)
+					await message.channel.send('Hojicha bonks {user} for {duration}s'.format(user=uname,duration=bonk_duration))
+					await asyncio.sleep(bonk_duration)
+					await user2bonk.remove_roles(role)
+					await message.channel.send('Hojicha unbonks {user}'.format(user=uname))
 
 
 			except ValueError:
