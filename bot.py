@@ -89,7 +89,7 @@ async def on_message(message):
 		elif msg_args[1].upper().startswith(' BONK'):
 			try:
 				bonk_id,bonk_duration=hf.bonk(msg_arg_list[2:])
-				if duration >= 60*60: # one hour
+				if bonk_duration >= 60*60: # one hour
 					await message.channel.send('Hojichas is admiring the bonk hammer and didn\'t hear you.')
 				else:
 					user2bonk= message.mentions[0]
