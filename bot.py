@@ -288,3 +288,4 @@ client.start()
 #			await message.channel.send(hf.help_text())
 #		else:
 #			await message.channel.send('Hojicha slowly looks in your direction')
+
