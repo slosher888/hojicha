@@ -185,6 +185,38 @@ async def pick(ctx: itr.CommandContext, list:str):
 async def roll_dice(ctx: itr.CommandContext, num_sides:int=6, num_dice:int=1, modifier:int=0):
 	await ctx.send(hf.roll_dice(num_dice,num_sides,modifier))
 
+@client.command(
+	name="c2f",
+	description="Convert Celsus to Fahrenheit",
+	options = [
+		itr.Option(
+			name="celsius",
+			description="Celsius temp",
+			type=itr.OptionType.NUMBER,
+			required=True,
+		),
+	],
+)
+async def c_to_f(ctx: itr.CommandContext, celsius:float):
+	fahrenheit=hf.c_to_f(celsius)
+	await ctx.send(f"{celsius} C is {fahrenheit:.2f} F\n")
+
+@client.command(
+	name="f2c",
+	description="Convert Fahrenheit to Celsius",
+	options = [
+		itr.Option(
+			name="fahrenheit",
+			description="Fahrenheit temp",
+			type=itr.OptionType.NUMBER,
+			required=True,
+		),
+	],
+)
+async def f_to_c(ctx: itr.CommandContext, fahrenheit:float):
+	celsius=hf.f_to_c(fahrenheit)
+	await ctx.send(f"{fahrenheit} F is {celsius:.2f} F\n")
+
 client.start()
 
 #@client.event
