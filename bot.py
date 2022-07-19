@@ -86,7 +86,7 @@ async def on_message(message):
 			text_to_parse=msg_args[1][5:]
 			response_string=hf.c_to_f(text_to_parse)
 			await message.channel.send(response_string)
-		elif msg_args[1].upper().startswith('FTOC'):
+		elif msg_args[1].upper().startswith(' FTOC'):
 			text_to_parse=msg_args[1][5:]
 			response_string=hf.f_to_c(text_to_parse) 
 			await message.channel.send(response_string)
