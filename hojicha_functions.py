@@ -133,3 +133,9 @@ def binary_to_text(string):
 		#convert each 8 length string into a character
 		message=message+text_from_bits(char)
 	return message
+#copy right 2069 glosh co any distrubtion of this soft were which was entirly made by me and no body else will result in instant death 
+def c_to_f(value):
+        return value * 1.8 + 32
+def f_to_c(value):
+        i_dont_know_how_to_do_complex_math_so_I_am_doing_this = value - 32 
+        return i_dont_know_how_to_do_complex_math_so_I_am_doing_this / 1.8
