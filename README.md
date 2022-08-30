@@ -25,3 +25,10 @@ Features, says hello
 
 Make sure to set `FORTUNE_DB_PATH` in `.env` or you'll make Hojicha sad. T_T
 And we can't have that...
+
+## License
+You may use any code in this repo but you must:
+* Give credit to SlosherDeluxe (that's me)
+* Tell me (because I'm nosy)
+* Not use any code for commercial purposes
+* Make the source code for your project available
