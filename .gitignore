@@ -2,3 +2,5 @@
 .DS_STORE
 playground.py
 bot_playground.py
+.swp
+__pycache__

@@ -7,19 +7,125 @@ import subprocess
 import hojicha_functions as hf
 import requests
 from dotenv import load_dotenv
-
+import interactions
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-fortune_file=os.getenv('FORTUNE_DB_PATH')
+#fortune_file=os.getenv('FORTUNE_DB_PATH')
 encoding='utf-8'
 wakeup_time=dt.datetime.now()
 
-client = discord.Client()
+client = interactions.Client(token=TOKEN)
 
-@client.event
-async def on_ready():
-	print('We have logged in as {0.user}'.format(client))
+@client.command(
+	name="cake",
+	description="gives cake",
+	options = [
+		interactions.Option(
+			name="wants_extra",
+			description="Want extra cake?",
+			type=interactions.OptionType.STRING,
+			required=False,
+		),
+	],
+)
+async def cake(ctx: interactions.CommandContext, wants_extra:str="False"):
+	result="You have received "
+	if wants_extra.lower()=="yes":
+		result = result+"extra "
+	result = result+"cake."
+	await ctx.send(result)
+
+@client.command(
+	name="speak",
+	description="Give words of wisdome (a la fortune)",
+)
+async def speak(ctx: interactions.CommandContext):
+	res = subprocess.check_output(['fortune'])
+	await ctx.send(res.decode(encoding))
+
+@client.command(
+	name="question",
+	description="Ask a yes or no question",
+	options = [
+		interactions.Option(
+			name="text",
+			description="Your inquiry",
+			type=interactions.OptionType.STRING,
+			required=True,
+		),
+	],
+)
+async def question(ctx: interactions.CommandContext, text:str):
+	await ctx.send(hf.yes_no(text))
+
+
+@client.command(
+	name="uptime",
+	description="How long has Hojicha been awake?",
+)
+async def uptime(ctx: interactions.CommandContext):
+	await ctx.send("I have been awake for "+ hf.hojicha_uptime(wakeup_time))
+
+@client.command(
+	name="draw_card",
+	description="Draw a tarot card",
+	options = [
+		interactions.Option(
+			name="text",
+			description="Your inquiry",
+			type=interactions.OptionType.STRING,
+			required=False,
+		),
+	],
+)
+async def draw_card(ctx: interactions.CommandContext, text:str=''):
+	await ctx.send(hf.draw_a_tarot_card(text))
+@client.command(
+	name="pick",
+	description="Choose from a comma seperated list",
+	options = [
+		interactions.Option(
+			name="list",
+			description="Your list of items",
+			type=interactions.OptionType.STRING,
+			required=True,
+		),
+	],
+)
+async def pick(ctx: interactions.CommandContext, choose_list:str):
+	await ctx.send(hf.pick_one(choose_list))
+
+@client.command(
+	name="roll_dice",
+	description="Roll N dice with M sides",
+	options = [
+		interactions.Option(
+			name="num_dice",
+			description="How many dice to roll",
+			type=interactions.OptionType.INTEGER,
+			required=False,
+		),
+		interactions.Option(
+			name="num_sides",
+			description="Sides per die",
+			type=interactions.OptionType.INTEGER,
+			required=True,
+		),
+		interactions.Option(
+			name="modifier",
+			description="How much to add/subtract",
+			type=interactions.OptionType.INTEGER,
+			required=False,
+		),
+	],
+)
+async def roll_dice(ctx: interactions.CommandContext, num_sides:int, num_dice:int=1, modifier:int=0):
+	await ctx.send(hf.roll_dice(num_dice,num_sides,modifier))
+
+#@client.event
+#async def on_ready():
+#	print('We have logged in as {0.user}'.format(client))
 
 async def send_big_message(message,string):
 	filename=str(dt.datetime.now())+'.txt'
@@ -90,4 +196,4 @@ async def on_message(message):
 
 
 
-client.run(TOKEN)
+client.start()

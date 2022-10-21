@@ -9,8 +9,11 @@ def draw_a_tarot_card(msg_args):
 	response=requests.get('https://rws-cards-api.herokuapp.com/api/v1/cards/random?n=1').json()
 	card=response['cards'][0]
 	orientation=' '+random.choice(['right side up.','upside down.'])
+	result=''
+	if msg_args != '':
+		result='> Original question: ' + msg_args +'\n\n'
 
-	result='You have drawn '+ card['name']+orientation+'\n'
+	result +='You have drawn '+ card['name']+orientation+'\n'
 	result +='\nMeaning up:\n'
 	result += card['meaning_up']
 	result +='\n\nMeaning upside down:\n'
@@ -68,22 +71,21 @@ def yes_no(mesg):
 def hojicha_uptime(wakeup_time):
 	return humanize.naturaltime(dt.datetime.now()-wakeup_time)[:-4]+'.'
 
-def roll_dice(msg_args):
+def roll_dice(n,m,k):
 # roll N dice with M sides with +/- K bonus/penalty
 # format !hojicha roll NdM +/-K
-	roll_args=msg_args.split(' ')
-	dice_text=roll_args[2]
-	[n,m] = dice_text.split('D')
-	
-		
-	try:
-		n=int(n)
-		m=int(m)
-	except ValueError:
-		return 'Hojicha sniffs the wind...'
+#	roll_args=msg_args.split(' ')
+#	dice_text=roll_args[2]
+#	[n,m] = dice_text.split('D')
+
+#	try:
+#		n=int(n)
+#		m=int(m)
+#	except ValueError:
+#		return 'Hojicha sniffs the wind...'
 	if n > 300:
 		return 'Hojicha doesn\'t really feel like doing that'
-	dice_results=[ random.randint(1,m) for i in range(n)]	
+	dice_results=[ random.randint(1,m) for i in range(n)]
 
 	try:
 		mod_text=roll_args[3]
@@ -95,10 +97,10 @@ def roll_dice(msg_args):
 		return 'You have rolled:\n' + ' '.join(result_string)
 	except ValueError:
 		return 'Hojicha is remembering something...'
-	
+
 	if mod_text[0]=='-':
 		mod=mod*-1
-	
+
 	dice_results_mod = ['{dice_roll} ({orig})'.format(
 	dice_roll=roll+mod,orig=roll) for roll in dice_results]
 	result_string='You have rolled:\n' + ' '.join(dice_results_mod)
@@ -123,7 +125,7 @@ def text_from_bits(bits,encoding='utf-8', errors='surrogatepass'):
 def binary_to_text(string):
 	# remove whitespace from string (if any)
 	no_space = string.replace(" ","").replace('\n','')
-	
+
 	# break up string into chunks of 8
 	chunks,chunk_size= len(no_space), 8
 	char_list=[ no_space[i:i+chunk_size] for i in range(0,chunks,chunk_size)]
