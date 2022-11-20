@@ -42,7 +42,8 @@ def pick_one(string):
 		result = 'You gave me no choice, I pick ' + list[0] + '\nT_T'
 	else:
 		selection=random.choice(list)
-		result = "I pick... " + selection
+		result = "From "	 + string + ".......\n\n"
+		result += "I pick... " + selection
 	return result
 
 def yes_no(mesg):

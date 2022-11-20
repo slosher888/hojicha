@@ -7,29 +7,32 @@ import subprocess
 import hojicha_functions as hf
 import requests
 from dotenv import load_dotenv
-import interactions
+import interactions as itr
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 #fortune_file=os.getenv('FORTUNE_DB_PATH')
+guild_id=os.getenv('GID')
 encoding='utf-8'
 wakeup_time=dt.datetime.now()
 
-client = interactions.Client(token=TOKEN)
+client = itr.Client(token=TOKEN,
+	default_scope=guild_id,
+	intents=itr.Intents.DEFAULT | itr.Intents.GUILD_MESSAGE_CONTENT)
 
 @client.command(
 	name="cake",
 	description="gives cake",
 	options = [
-		interactions.Option(
+		itr.Option(
 			name="wants_extra",
 			description="Want extra cake?",
-			type=interactions.OptionType.STRING,
+			type=itr.OptionType.STRING,
 			required=False,
 		),
 	],
 )
-async def cake(ctx: interactions.CommandContext, wants_extra:str="False"):
+async def cake(ctx: itr.CommandContext, wants_extra:str="False"):
 	result="You have received "
 	if wants_extra.lower()=="yes":
 		result = result+"extra "
@@ -40,7 +43,7 @@ async def cake(ctx: interactions.CommandContext, wants_extra:str="False"):
 	name="speak",
 	description="Give words of wisdome (a la fortune)",
 )
-async def speak(ctx: interactions.CommandContext):
+async def speak(ctx: itr.CommandContext):
 	res = subprocess.check_output(['fortune'])
 	await ctx.send(res.decode(encoding))
 
@@ -48,15 +51,15 @@ async def speak(ctx: interactions.CommandContext):
 	name="question",
 	description="Ask a yes or no question",
 	options = [
-		interactions.Option(
+		itr.Option(
 			name="text",
 			description="Your inquiry",
-			type=interactions.OptionType.STRING,
+			type=itr.OptionType.STRING,
 			required=True,
 		),
 	],
 )
-async def question(ctx: interactions.CommandContext, text:str):
+async def question(ctx: itr.CommandContext, text:str):
 	await ctx.send(hf.yes_no(text))
 
 
@@ -64,136 +67,135 @@ async def question(ctx: interactions.CommandContext, text:str):
 	name="uptime",
 	description="How long has Hojicha been awake?",
 )
-async def uptime(ctx: interactions.CommandContext):
+async def uptime(ctx: itr.CommandContext):
 	await ctx.send("I have been awake for "+ hf.hojicha_uptime(wakeup_time))
 
 @client.command(
 	name="draw_card",
 	description="Draw a tarot card",
 	options = [
-		interactions.Option(
+		itr.Option(
 			name="text",
 			description="Your inquiry",
-			type=interactions.OptionType.STRING,
+			type=itr.OptionType.STRING,
 			required=False,
 		),
 	],
 )
-async def draw_card(ctx: interactions.CommandContext, text:str=''):
+async def draw_card(ctx: itr.CommandContext, text:str=''):
 	await ctx.send(hf.draw_a_tarot_card(text))
+
+
 @client.command(
 	name="pick",
 	description="Choose from a comma seperated list",
 	options = [
-		interactions.Option(
+		itr.Option(
 			name="list",
 			description="Your list of items",
-			type=interactions.OptionType.STRING,
+			type=itr.OptionType.STRING,
 			required=True,
 		),
 	],
 )
-async def pick(ctx: interactions.CommandContext, choose_list:str):
-	await ctx.send(hf.pick_one(choose_list))
+async def pick(ctx: itr.CommandContext, list:str):
+	await ctx.send(hf.pick_one(list))
 
 @client.command(
 	name="roll_dice",
 	description="Roll N dice with M sides",
 	options = [
-		interactions.Option(
-			name="num_dice",
-			description="How many dice to roll",
-			type=interactions.OptionType.INTEGER,
-			required=False,
-		),
-		interactions.Option(
+		itr.Option(
 			name="num_sides",
 			description="Sides per die",
-			type=interactions.OptionType.INTEGER,
+			type=itr.OptionType.INTEGER,
 			required=True,
 		),
-		interactions.Option(
+		itr.Option(
+			name="num_dice",
+			description="How many dice to roll",
+			type=itr.OptionType.INTEGER,
+			required=False,
+		),
+		itr.Option(
 			name="modifier",
 			description="How much to add/subtract",
-			type=interactions.OptionType.INTEGER,
+			type=itr.OptionType.INTEGER,
 			required=False,
 		),
 	],
 )
-async def roll_dice(ctx: interactions.CommandContext, num_sides:int, num_dice:int=1, modifier:int=0):
+async def roll_dice(ctx: itr.CommandContext, num_sides:int, num_dice:int=1, modifier:int=0):
 	await ctx.send(hf.roll_dice(num_dice,num_sides,modifier))
+
+client.start()
 
 #@client.event
 #async def on_ready():
 #	print('We have logged in as {0.user}'.format(client))
 
-async def send_big_message(message,string):
-	filename=str(dt.datetime.now())+'.txt'
-	save_prefix='/tmp'
-	filepath=save_prefix+'/'+filename
-	response_file = open(filepath,'w')
-	max_len=80
-	chunks = [string[i:i+max_len] for i in range(0,len(string),max_len)]
-	for chunk in chunks:
-		response_file.write(chunk)
-		response_file.write('\n')
-	response_file.close()
-	response_file = open(filepath,'r')
-
-	discord_file=discord.File(response_file,filename)
-	await message.channel.send(file=discord_file)
-	response_file.close()
-
-@client.event
-async def on_message(message):
-	msg=message.content
-	if message.author == client.user:
-		return
-	if msg.startswith('!hojicha'):
-		msg_args=msg.split('!hojicha')
-		if msg_args[1]=='' or msg_args[1].upper()==' HI' or msg_args[1].upper()==' HELLO':
-			await message.channel.send('Hello!')
-		elif msg_args[1].upper()==' SPEAK':
-			res = subprocess.check_output(['fortune', fortune_file])
-			await message.channel.send(res.decode(encoding))
-		elif msg_args[1].upper().startswith(' Q'):
-			await message.channel.send(hf.yes_no(msg_args[1]))
-		elif msg_args[1].upper().startswith(' UPTIME'):
-			await message.channel.send("I have been awake for "+ hf.hojicha_uptime(wakeup_time))
-		elif msg_args[1].upper().startswith(' DRAW CARD'):
-			await message.channel.send(hf.draw_a_tarot_card(msg_args[1]))
-		elif msg_args[1].upper().startswith(' PICK'):
-			await message.channel.send(hf.pick_one(msg_args[1][6:]))
-		elif msg_args[1].upper().startswith(' ROLL'):
-			await message.channel.send(hf.roll_dice(msg_args[1].upper() ))
-		elif msg_args[1].upper().startswith(' T2B'):
-			if len(message.attachments)==1:
-				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
-			else:
-				text_to_parse=msg_args[1][5:]
-
-			response_string=hf.text_to_binary(text_to_parse)
-			if len(response_string) > 2000:
-				await send_big_message(message,response_string)
-			else:
-				await message.channel.send(response_string)
-		elif msg_args[1].upper().startswith(' B2T'):
-			if len(message.attachments)==1:
-				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
-			else:
-				text_to_parse=msg_args[1][5:]
-
-			response_string=hf.binary_to_text(text_to_parse)
-			if len(response_string) > 2000:
-				await send_big_message(message,response_string)
-			else:
-				await message.channel.send(response_string)
-		elif msg_args[1].upper().startswith(' HELP'):
-			await message.channel.send(hf.help_text())
-		else:
-			await message.channel.send('Hojicha slowly looks in your direction')
-
-
-
-
-client.start()
+#async def send_big_message(message,string):
+#	filename=str(dt.datetime.now())+'.txt'
+#	save_prefix='/tmp'
+#	filepath=save_prefix+'/'+filename
+#	response_file = open(filepath,'w')
+#	max_len=80
+#	chunks = [string[i:i+max_len] for i in range(0,len(string),max_len)]
+#	for chunk in chunks:
+#		response_file.write(chunk)
+#		response_file.write('\n')
+#	response_file.close()
+#	response_file = open(filepath,'r')
+#
+#	discord_file=discord.File(response_file,filename)
+#	await message.channel.send(file=discord_file)
+#	response_file.close()
+#
+#@client.event
+#async def on_message(message):
+#	msg=message.content
+#	if message.author == client.user:
+#		return
+#	if msg.startswith('!hojicha'):
+#		msg_args=msg.split('!hojicha')
+#		if msg_args[1]=='' or msg_args[1].upper()==' HI' or msg_args[1].upper()==' HELLO':
+#			await message.channel.send('Hello!')
+#		elif msg_args[1].upper()==' SPEAK':
+#			res = subprocess.check_output(['fortune', fortune_file])
+#			await message.channel.send(res.decode(encoding))
+#		elif msg_args[1].upper().startswith(' Q'):
+#			await message.channel.send(hf.yes_no(msg_args[1]))
+#		elif msg_args[1].upper().startswith(' UPTIME'):
+#			await message.channel.send("I have been awake for "+ hf.hojicha_uptime(wakeup_time))
+#		elif msg_args[1].upper().startswith(' DRAW CARD'):
+#			await message.channel.send(hf.draw_a_tarot_card(msg_args[1]))
+#		elif msg_args[1].upper().startswith(' PICK'):
+#			await message.channel.send(hf.pick_one(msg_args[1][6:]))
+#		elif msg_args[1].upper().startswith(' ROLL'):
+#			await message.channel.send(hf.roll_dice(msg_args[1].upper() ))
+#		elif msg_args[1].upper().startswith(' T2B'):
+#			if len(message.attachments)==1:
+#				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
+#			else:
+#				text_to_parse=msg_args[1][5:]
+#
+#			response_string=hf.text_to_binary(text_to_parse)
+#			if len(response_string) > 2000:
+#				await send_big_message(message,response_string)
+#			else:
+#				await message.channel.send(response_string)
+#		elif msg_args[1].upper().startswith(' B2T'):
+#			if len(message.attachments)==1:
+#				text_to_parse=requests.get(message.attachments[0].url).content.decode("utf-8")
+#			else:
+#				text_to_parse=msg_args[1][5:]
+#
+#			response_string=hf.binary_to_text(text_to_parse)
+#			if len(response_string) > 2000:
+#				await send_big_message(message,response_string)
+#			else:
+#				await message.channel.send(response_string)
+#		elif msg_args[1].upper().startswith(' HELP'):
+#			await message.channel.send(hf.help_text())
+#		else:
+#			await message.channel.send('Hojicha slowly looks in your direction')
