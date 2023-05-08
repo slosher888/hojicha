@@ -90,7 +90,7 @@ def roll_dice(n,m,k):
 
 	try:
 		mod_text=k
-		mod=int(mod_text[1:])
+		mod=int(mod_text)
 	except IndexError:
 		result_string=' '.join([str(roll) for roll in dice_results])
 		if len(result_string) > 1300:
@@ -99,12 +99,27 @@ def roll_dice(n,m,k):
 	except ValueError:
 		return 'Hojicha is remembering something...'
 
-	if mod_text[0]=='-':
-		mod=mod*-1
+	if mod==0:
+		formated_results='{dice_roll} '
+	else:
+		formated_results='{dice_roll} ({orig}) '
 
-	dice_results_mod = ['{dice_roll} ({orig})'.format(
+	dice_results_string = [formated_results.format(
 	dice_roll=roll+mod,orig=roll) for roll in dice_results]
-	result_string='You have rolled:\n' + ' '.join(dice_results_mod)
+
+
+	if (n ==1):
+		result_string=f'Rolling one {m}-sided die'
+	else:
+		result_string=f'Rolling {n}, {m}-sided dice'
+	if (mod==0):
+		result_string=result_string+'...\n'
+	else:
+		result_string=result_string+f' with modifier {k}...\n'
+
+	#result_string='You have rolled:\n' + (result_string)
+	result_string=result_string + '\nYou have rolled:\n'
+	result_string=result_string + ' '.join(dice_results_string)
 
 	#return "you asked for "+msg_args
 	if len(result_string) > 1300:
