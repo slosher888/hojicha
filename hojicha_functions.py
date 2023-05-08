@@ -89,7 +89,7 @@ def roll_dice(n,m,k):
 	dice_results=[ random.randint(1,m) for i in range(n)]
 
 	try:
-		mod_text=roll_args[3]
+		mod_text=k
 		mod=int(mod_text[1:])
 	except IndexError:
 		result_string=' '.join([str(roll) for roll in dice_results])

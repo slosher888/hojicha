@@ -8,6 +8,7 @@ import hojicha_functions as hf
 import requests
 from dotenv import load_dotenv
 import interactions as itr
+import interactions.ext.voice as iev
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -19,6 +20,20 @@ wakeup_time=dt.datetime.now()
 client = itr.Client(token=TOKEN,
 	default_scope=guild_id,
 	intents=itr.Intents.DEFAULT | itr.Intents.GUILD_MESSAGE_CONTENT)
+
+iev.setup(client)
+
+#@client.event
+#async def on_voice_state_update(vs: iev.VoiceState):
+#        print(vs.self_mute)
+
+@client.command(name="play_song",description="play a song", options=[])
+async def play_song(ctx: itr.CommandContext):
+    await client.connect_vc(channel_id=int(ctx.channel.id),guild_id=(ctx.guild_id),self_deaf=True,self_mute=False)
+    await client.play(file="/home/csul/Downloads/chicken_fidler.mp3 ")
+
+
+
 
 @client.command(
 	name="cake",
@@ -109,7 +124,7 @@ async def pick(ctx: itr.CommandContext, list:str):
 			name="num_sides",
 			description="Sides per die",
 			type=itr.OptionType.INTEGER,
-			required=True,
+			required=False,
 		),
 		itr.Option(
 			name="num_dice",
@@ -125,7 +140,7 @@ async def pick(ctx: itr.CommandContext, list:str):
 		),
 	],
 )
-async def roll_dice(ctx: itr.CommandContext, num_sides:int, num_dice:int=1, modifier:int=0):
+async def roll_dice(ctx: itr.CommandContext, num_sides:int=6, num_dice:int=1, modifier:int=0):
 	await ctx.send(hf.roll_dice(num_dice,num_sides,modifier))
 
 client.start()
