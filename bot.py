@@ -18,7 +18,7 @@ encoding='utf-8'
 wakeup_time=dt.datetime.now()
 
 client = itr.Client(token=TOKEN,
-	default_scope=guild_id,
+#	default_scope=guild_id,
 	intents=itr.Intents.DEFAULT | itr.Intents.GUILD_MESSAGE_CONTENT)
 
 iev.setup(client)
@@ -101,6 +101,49 @@ async def draw_card(ctx: itr.CommandContext, text:str=''):
 	await ctx.send(hf.draw_a_tarot_card(text))
 
 
+@client.command(
+	name="t2b",
+	description="Convert Text to binary",
+	options = [
+		itr.Option(
+			name="text",
+			description="Text to convert",
+			type=itr.OptionType.STRING,
+			required=True,
+		),
+	],
+)
+async def t2b(ctx: itr.CommandContext, text:str=''):
+	#response_string=hf.text_to_binary(text)
+	response_string="Converting the following to binary...\n**"+text+"**\n\n"
+	binary_text=hf.text_to_binary(text)
+	if(len(binary_text) > 20000):
+		await ctx.send("Hojicha is watching that video where a guy opens up a $1300+ wheel of cheese.\n")
+	else:
+		await ctx.send(response_string+binary_text)
+
+@client.command(
+	name="b2t",
+	description="Convert binary to text",
+	options = [
+		itr.Option(
+			name="binary",
+			description="Binary to convert",
+			type=itr.OptionType.STRING,
+			required=True,
+		),
+	],
+)
+async def b2t(ctx: itr.CommandContext, binary:str=''):
+	#response_string=hf.text_to_binary(text)
+	response_string="Converting the following to text...\n**"+binary+"**\n\n"
+	#texted_binary=hf.text_from_bits(binary)
+	texted_binary="aaaaaaah"
+	if(len(texted_binary) > 20000):
+		await ctx.send("Hojicha is watching that video where a guy opens up a $1300+ wheel of cheese.\n")
+	else:
+		#await ctx.send(response_string+texted_binary)
+		await ctx.send(response_string+"Hojicha asleep but wearing those glasses that make it seem like it's awake.")
 @client.command(
 	name="pick",
 	description="Choose from a comma seperated list",
