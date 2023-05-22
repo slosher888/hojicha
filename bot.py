@@ -8,11 +8,11 @@ import hojicha_functions as hf
 import requests
 from dotenv import load_dotenv
 import interactions as itr
-import interactions.ext.voice as iev
+#import interactions.ext.voice as iev
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-#fortune_file=os.getenv('FORTUNE_DB_PATH')
+fortune_file=os.getenv('FORTUNE_DB_PATH')
 guild_id=os.getenv('GID')
 encoding='utf-8'
 wakeup_time=dt.datetime.now()
@@ -21,7 +21,6 @@ client = itr.Client(token=TOKEN,
 #	default_scope=guild_id,
 	intents=itr.Intents.DEFAULT | itr.Intents.GUILD_MESSAGE_CONTENT)
 
-iev.setup(client)
 
 #@client.event
 #async def on_voice_state_update(vs: iev.VoiceState):
@@ -59,7 +58,7 @@ async def cake(ctx: itr.CommandContext, wants_extra:str="False"):
 	description="Give words of wisdome (a la fortune)",
 )
 async def speak(ctx: itr.CommandContext):
-	res = subprocess.check_output(['fortune'])
+	res = subprocess.check_output(['fortune',fortune_file])
 	await ctx.send(res.decode(encoding))
 
 @client.command(
@@ -143,7 +142,7 @@ async def b2t(ctx: itr.CommandContext, binary:str=''):
 		await ctx.send("Hojicha is watching that video where a guy opens up a $1300+ wheel of cheese.\n")
 	else:
 		#await ctx.send(response_string+texted_binary)
-		await ctx.send(response_string+"Hojicha asleep but wearing those glasses that make it seem like it's awake.")
+		await ctx.send(response_string+"Hojicha's asleep but wearing those glasses that make it seem like it's awake.")
 @client.command(
 	name="pick",
 	description="Choose from a comma seperated list",
